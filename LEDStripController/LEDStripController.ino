@@ -1,12 +1,22 @@
-//#################################
-//# 5 Levels Led Strip Controller #
-//#################################
+/*
+  ╔------------------------------------------------------------╗
+  ║               5 Levels LED strip controller                ║
+  ╠------------------------------------------------------------╣
+  ║ A simple LED strip controller project based on Digispark   ║
+  ║ ATtiny85, also using a capacitive touch sensor and a MOSFET║
+  ║ transistor.                                                ║
+  ╠------------------------------------------------------------╣
+  ║ Filename: LEDStripController.ino                           ║
+  ║ Last modified: 22 March 2017 by Leonardo Sposina.          ║
+  ╚------------------------------------------------------------╝
+*/
 
 const byte SENSOR_PIN = 2;
 const byte TRANSISTOR_PIN = 4;
-const byte MAX_LEVELS = 5;
-const byte LED_STEP = 255 / MAX_LEVELS;
-byte ledLevel = 0;
+const byte INTENSITY_LEVELS = 5;
+const byte MIN_INTENSITY = 255 / INTENSITY_LEVELS;
+
+byte touchCount = 0;
 
 void setup() {
   pinMode(SENSOR_PIN, INPUT);
@@ -15,12 +25,13 @@ void setup() {
 
 void loop() {
   if (digitalRead(SENSOR_PIN)) {
-    if (ledLevel < MAX_LEVELS) {
-      ledLevel++;
+    if (touchCount < INTENSITY_LEVELS) {
+      touchCount++;
     } else {
-      ledLevel = 0;  
+      touchCount = 0;
     }
-  analogWrite(TRANSISTOR_PIN, LED_STEP * ledLevel);
+    byte ledIntensity = MIN_INTENSITY * touchCount;
+    analogWrite(TRANSISTOR_PIN, ledIntensity);
   }
   delay(500);
 }
